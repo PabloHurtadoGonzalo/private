@@ -1,0 +1,37 @@
+services:
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - "9832:80"
+    networks:
+      wordpress_network:
+        ipv4_address: 10.56.1.21
+    depends_on:
+      - mysql
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_USER: wpuser
+      WORDPRESS_DB_PASSWORD: wppassword
+      WORDPRESS_DB_NAME: wordpress
+  mysql:
+    image: mysql:latest
+    networks:
+      wordpress_network:
+        ipv4_address: 10.56.1.20
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpuser
+      MYSQL_PASSWORD: wppassword
+
+networks:
+  wordpress_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.56.1.0/24
+
+volumes:
+  mysql:
